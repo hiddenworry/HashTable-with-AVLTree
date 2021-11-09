@@ -10,7 +10,7 @@ package hashtable;
  * @author ADMIN
  */
 public class AVLTree<K extends Comparable<K>, V> {
-     AVLNode<K,V> root;
+    AVLNode<K,V> root;
     int height(AVLNode<K,V> N) {
         if (N == null)
             return 0;
@@ -118,18 +118,6 @@ public class AVLTree<K extends Comparable<K>, V> {
         draw_NRL(this.root, "", "");
     }
 
-    public void draw_NLR(AVLNode<K,V> node, String prefix, String childrenPrefix) {
-        if (node == null) {
-            return;
-        }
-        System.out.println(prefix + node.key);
-        if (node.right == null) {
-            draw_NLR(node.left, childrenPrefix + "L-- ", childrenPrefix + "    ");
-        } else {
-            draw_NLR(node.left, childrenPrefix + "L-- ", childrenPrefix + "|   ");
-            draw_NLR(node.right, childrenPrefix + "R-- ", childrenPrefix + "    ");
-        }
-    }
 
     public void draw_NRL(AVLNode<K,V> node, String prefix, String childrenPrefix) {
         if (node == null) {
@@ -171,51 +159,10 @@ public class AVLTree<K extends Comparable<K>, V> {
             return search(root.left, key);
         }
     }
-   
-    private String path(AVLNode<K,V> root, K key){
-
-        if (root == null) {
-            return null;
-        } else if (key.compareTo(root.key) == 0) {
-            return root.key.toString() ;
-        } else if (key.compareTo(root.key) > 0) {
-           return   root.key + "->" + path(root.right, key).toString();
-
-        } else {
-           return  root.key+  path(root.left, key).toString();
-
-        }
-
-    }
-    public void path(K key){
-        String s = "";
-        s =  s + path(root, key);
-        System.out.println(s);
-    }
-    private int count(AVLNode<K,V> root, K key){
-
-        if (root == null) {
-            return 0;
-        } else if (key.compareTo(root.key) == 0) {
-            return 1;
-        } else if (key.compareTo(root.key) > 0) {
-            return  count(root.right,key) + 1;
-
-        } else {
-            return  count(root.left,key) + 1;
-
-        }
-
-    }
-    public void count(K key){
-        System.out.println(count(root, key));
-    }
     public void delete(K key) {
-        this.root = this.delete(this.root, key);
-        
-    }
-   
-    private AVLNode<K,V> delete(AVLNode<K,V> root, K key) {
+        this.root = this.delete(this.root, key);  
+    }    
+   private AVLNode<K,V> delete(AVLNode<K,V> root, K key) {
         if (root == null) {
             return null;
         }
@@ -236,15 +183,40 @@ public class AVLTree<K extends Comparable<K>, V> {
             root.right = delete(root.right, root.key);
 
         }
+           root.height = 1 + max(height(root.left),
+                height(root.right));
+           if (root == null)
+               return null;
+        /* 3. Get the balance factor of this ancestor
+              node to check whether this node became
+              unbalanced */
+        int balance = getBalance(root);
+
+        // If this node becomes unbalanced, then there
+        // are 4 cases
+        // Left Left Case
+        if (balance < -1 && key.compareTo(root.left.key)<0)
+            return rightRotation(root);
+
+        // Right Right Case
+        if (balance > 1 && key.compareTo(root.right.key)>0)
+            return leftRotation(root);
+
+        // Left Right Case
+        if (balance < -1 && key.compareTo(root.left.key)>0) {
+            root.left = leftRotation(root.left);
+            return rightRotation(root);
+        }
+        
         return root;
     }
      private AVLNode<K,V> findSuccessor(AVLNode<K,V> root) {
 
-        AVLNode<K,V> p = root;
+        AVLNode<K,V> p = root.right;
         while (p.left != null) {
             p = p.left;
         }
         return p;
     }
-
+  
 }

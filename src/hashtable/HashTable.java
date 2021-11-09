@@ -12,16 +12,6 @@ import java.util.Objects;
  *
  * @author ADMIN
  */
-class Node<K, V> {
-
-    K key;
-    V Val;
-
-    public Node(K key, V val) {
-        this.key = key;
-        Val = val;
-    }
-}
 
 public class HashTable<K extends Comparable<K>, V> {
 
@@ -66,12 +56,14 @@ public class HashTable<K extends Comparable<K>, V> {
             throw new Exception("Duplicate key");
         }
         list.insert(key, value);
+       
     }
 // return value dua vao key
 
     public V get(K key) {
         int index = hash(key);
-        list = buckets[index];       
+        list = buckets[index];   
+       
         return list.getValue(key);
     }
 
@@ -80,10 +72,20 @@ public class HashTable<K extends Comparable<K>, V> {
         int index = hash(key);
         list = buckets[index];
         list.delete(key);
+       
+      
         size--;
         
 
       
     }
+  public void test(){
+      for (int i = 0; i < buckets.length; i++) {
+          buckets[i].draw();
+          
+      }
+  }
+    
+    
 
 }
