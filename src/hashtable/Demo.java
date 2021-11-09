@@ -26,13 +26,14 @@ public class Demo {
         hs.put(101, "K");
         hs.put(111, "L");
         hs.put(121, "M");
+     
+      // remove and rebalance
       hs.remove(31);
       hs.remove(51);
-      hs.remove(81);
-      hs.remove(1);
-      hs.remove(91);
-      hs.remove(71);
-      // remove and rebalance
+      hs.remove(61);
+      hs.remove(41);
+      hs.remove(21);
+      hs.remove(11);
         hs.test();
         System.out.println(hs.get(41));
         System.out.println(hs.get(91));

@@ -74,38 +74,8 @@ public class AVLTree<K extends Comparable<K>, V> {
             return node;
 
         /* 2. Update height of this ancestor node */
-        node.height = 1 + max(height(node.left),
-                height(node.right));
-
-        /* 3. Get the balance factor of this ancestor
-              node to check whether this node became
-              unbalanced */
-        int balance = getBalance(node);
-
-        // If this node becomes unbalanced, then there
-        // are 4 cases
-        // Left Left Case
-        if (balance < -1 && key.compareTo(node.left.key)<0)
-            return rightRotation(node);
-
-        // Right Right Case
-        if (balance > 1 && key.compareTo(node.right.key)>0)
-            return leftRotation(node);
-
-        // Left Right Case
-        if (balance < -1 && key.compareTo(node.left.key)>0) {
-            node.left = leftRotation(node.left);
-            return rightRotation(node);
-        }
-
-        // Right Left Case
-        if (balance > 1 && key.compareTo(node.right.key)<0) {
-            node.right = rightRotation(node.right);
-            return leftRotation(node);
-        }
-
-        /* return the (unchanged) node pointer */
-        return node;
+       
+        return rebalance(node);
     }
 
 
@@ -183,33 +153,32 @@ public class AVLTree<K extends Comparable<K>, V> {
             root.right = delete(root.right, root.key);
 
         }
-           root.height = 1 + max(height(root.left),
-                height(root.right));
-           if (root == null)
-               return null;
-        /* 3. Get the balance factor of this ancestor
-              node to check whether this node became
-              unbalanced */
-        int balance = getBalance(root);
-
-        // If this node becomes unbalanced, then there
-        // are 4 cases
-        // Left Left Case
-        if (balance < -1 && key.compareTo(root.left.key)<0)
-            return rightRotation(root);
-
-        // Right Right Case
-        if (balance > 1 && key.compareTo(root.right.key)>0)
-            return leftRotation(root);
-
-        // Left Right Case
-        if (balance < -1 && key.compareTo(root.left.key)>0) {
-            root.left = leftRotation(root.left);
-            return rightRotation(root);
-        }
-        
+      if( root != null) {
+          root = rebalance(root);
+      }
         return root;
     }
+   private AVLNode<K,V> rebalance(AVLNode<K,V> z) {
+    z.height = 1 + max(height(z.left),
+                              height(z.right));
+    int balance = getBalance(z);
+    if (balance > 1) {
+        if (height(z.right.right) > height(z.right.left)) {
+            z = leftRotation(z);
+        } else {
+            z.right =rightRotation(z.right);
+            z = leftRotation(z);
+        }
+    } else if (balance < -1) {
+        if (height(z.left.left) > height(z.left.right))
+            z = rightRotation(z);
+        else {
+            z.left = leftRotation(z.left);
+            z = rightRotation(z);
+        }
+    }
+    return z;
+}
      private AVLNode<K,V> findSuccessor(AVLNode<K,V> root) {
 
         AVLNode<K,V> p = root.right;
